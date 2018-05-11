@@ -33,8 +33,10 @@
 
 #include <sys/types.h>
 
+// sds是redis自己定义的字符串，c里面没有String类型的数据结构
 typedef char *sds;
 
+//  sdshdr中的buf是用来存储字符串的，free就是还能存储几个字符串，len就是已经存储的字符串；sds是基本数据结构，可以用来表示key-value中的key，value
 struct sdshdr {
     long len;
     long free;
