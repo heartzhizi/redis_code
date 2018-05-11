@@ -37,12 +37,12 @@
 #include <string.h>
 #include <ctype.h>
 #include "zmalloc.h"
-
+//  内存溢出函数
 static void sdsOomAbort(void) {
     fprintf(stderr,"SDS: Out Of Memory (SDS_ABORT_ON_OOM defined)\n");
     abort();
 }
-
+//  该函数void *指针可以用来指向各种类型的指针，但是需要强制转换一下；就是把字符数组init初始化称sds的形式
 sds sdsnewlen(const void *init, size_t initlen) {
     struct sdshdr *sh;
 
@@ -59,23 +59,24 @@ sds sdsnewlen(const void *init, size_t initlen) {
         else memset(sh->buf,0,initlen);
     }
     sh->buf[initlen] = '\0';
+    //  指向buf，就如果想找到头的话，还需要减去sds的空间；
     return (char*)sh->buf;
 }
-
+//  初始化称空
 sds sdsempty(void) {
     return sdsnewlen("",0);
 }
-
+// 把字符数组转换成sds的形式
 sds sdsnew(const char *init) {
     size_t initlen = (init == NULL) ? 0 : strlen(init);
     return sdsnewlen(init, initlen);
 }
-
+// sds的指针指向字符数组buf，如果想指向头，需要struct sdshdr *sh = (void*) (s-(sizeof(struct sdshdr)));
 size_t sdslen(const sds s) {
     struct sdshdr *sh = (void*) (s-(sizeof(struct sdshdr)));
     return sh->len;
 }
-
+//  复制
 sds sdsdup(const sds s) {
     return sdsnewlen(s, sdslen(s));
 }
@@ -89,14 +90,14 @@ size_t sdsavail(sds s) {
     struct sdshdr *sh = (void*) (s-(sizeof(struct sdshdr)));
     return sh->free;
 }
-
+//  更新sds中len和free的值
 void sdsupdatelen(sds s) {
     struct sdshdr *sh = (void*) (s-(sizeof(struct sdshdr)));
     int reallen = strlen(s);
     sh->free += (sh->len-reallen);
     sh->len = reallen;
 }
-
+//  如果s的free>=addlen直接返回结果；否则，新的newsh的buf是(len+addlen)*2；
 static sds sdsMakeRoomFor(sds s, size_t addlen) {
     struct sdshdr *sh, *newsh;
     size_t free = sdsavail(s);
