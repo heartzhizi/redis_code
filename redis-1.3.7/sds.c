@@ -76,7 +76,7 @@ size_t sdslen(const sds s) {
     struct sdshdr *sh = (void*) (s-(sizeof(struct sdshdr)));
     return sh->len;
 }
-//  复制
+//  复制s->buf；
 sds sdsdup(const sds s) {
     return sdsnewlen(s, sdslen(s));
 }
@@ -85,7 +85,7 @@ void sdsfree(sds s) {
     if (s == NULL) return;
     zfree(s-sizeof(struct sdshdr));
 }
-
+//  还可以装几个字符；
 size_t sdsavail(sds s) {
     struct sdshdr *sh = (void*) (s-(sizeof(struct sdshdr)));
     return sh->free;
