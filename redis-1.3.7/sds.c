@@ -117,7 +117,7 @@ static sds sdsMakeRoomFor(sds s, size_t addlen) {
     newsh->free = newlen - len;
     return newsh->buf;
 }
-
+//  把长度为len的t复制给s的buf
 sds sdscatlen(sds s, void *t, size_t len) {
     struct sdshdr *sh;
     size_t curlen = sdslen(s);
